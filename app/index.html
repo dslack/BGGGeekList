@@ -1,0 +1,50 @@
+<html ng-app="BGGGeekListApp">
+<head>
+	<!-- Latest compiled and minified CSS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.js"></script>
+  
+    <script src="js/lib.js"></script>
+	<link rel="stylesheet" href="css/lib.css" />
+
+    <script src="bgg.wiki.js"></script>
+    <script src="app.js"></script>
+
+</head>
+<body>
+	<div class="page-header">
+  		<h1>BGG Geek List Reader <small>Gencon 2015</small></h1>
+	</div>
+	<div bgg-list>
+	</div>
+
+	<script type="text/ng-template" id="list.html">
+		<form class="well well-sm">
+			<p class="small">Refreshed on <span class="label label-default">{{vm.refreshed | date: "dd-MMM-yyyy hh:mm a"}}</span></p>
+			<div class="form-group">
+				<label for="gameName">Name:</label>
+				<input type="text" class="form-control" ng-model="gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
+			</div>
+			<div class="form-group">
+				<label for="editedDate">Last Edited (and newer)</label>
+                <div class='input-group date' id='datetimepicker1'>
+                	
+                    <input type='text' class="form-control" ng-model="lastEdited" placeholder="Last time the item was edited"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar" ng-click="vm.showDatePicker()"></span>
+                    </span>
+                </div>
+            </div>		
+		</form>
+		<div class="list-group">
+			<a class="list-group-item" ng-repeat="item in vm.results track by item.$.id" href="https://boardgamegeek.com/{{item.$.subtype}}/{{item.$.objectid}}">
+					<h4 class="list-group-item-heading">{{item.$.objectname}} </h4>
+					<p class="list-group-item-text small"><em>Updated On {{item.formatedPostDate | date: 'dd-MMM-yyyy hh:mm a'}}</em></p>
+					<p class="list-group-item-text">
+						<wiki-convert text="item.body[0]"></wiki-convert>
+					</p>
+				</a>
+		</div>
+	</script>
+</body>	
+</html>

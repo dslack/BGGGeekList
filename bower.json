@@ -1,0 +1,21 @@
+{
+  "name": "BGGGeekList",
+  "main": "index.html",
+  "version": "0.0.0",
+  "authors": [
+    "Dan Slack <dan@terrazzotechnologies.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "~4.14.30",
+    "wiky.js": "https://github.com/tanin47/wiky.js.git",
+    "bootstrap": "~3.3.5"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "BGGGeeklist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "postinstall": "bower install && gulp"
+  },
+  "author": "Dan Slack",
+  "license": "MIT",
+  "dependencies": {
+    "bower": "^1.4.1",
+    "express": "~4.9.x",
+    "fs-extra": "^0.20.0",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.5.2",
+    "lodash": "^3.9.3",
+    "moment": "^2.10.3",
+    "node-schedule": "^0.2.9",
+    "request": "^2.58.0",
+    "xml2js": "^0.4.9"
+  }
+}
