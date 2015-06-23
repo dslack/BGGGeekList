@@ -43,7 +43,7 @@ var SampleApp = function() {
         }
 
         //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
+        self.zcache['index.html'] = fs.readFileSync('./app/index.html');
     };
 
 
@@ -89,27 +89,20 @@ var SampleApp = function() {
     /*  App server functions (main app logic here).                       */
     /*  ================================================================  */
 
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
     self.createRoutes = function() {
         self.routes = { };
 
-
         self.routes['/'] = function(req, res) {
             res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get("app/index.html"));
+            res.send("app/index.html");
         };
     };
 
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
     self.initializeServer = function() {
         self.createRoutes();
-        self.app = express.createServer();
+        self.app = express();
+
+        self.app.use(express.static(__dirname + '/app'));
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
@@ -117,10 +110,6 @@ var SampleApp = function() {
         }
     };
 
-
-    /**
-     *  Initializes the sample application.
-     */
     self.initialize = function() {
         self.setupVariables();
         self.populateCache();
@@ -130,10 +119,6 @@ var SampleApp = function() {
         self.initializeServer();
     };
 
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
     self.start = function() {
         //  Start the app on the specific interface (and port).
         self.app.listen(self.port, self.ipaddress, function() {
@@ -142,7 +127,7 @@ var SampleApp = function() {
         });
     };
 
-};   /*  Sample Application.  */
+};
 
 
 
