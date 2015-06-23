@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var dir = process.env.OPENSHIFT_REPO_DIR || './';
+
 var	request	=	require('request'),
 	xml2js	=	require('xml2js'),
 	_		=	require('lodash'),
@@ -21,7 +23,7 @@ var	request	=	require('request'),
 			n.formatedPostDate = dt.toISOString();
 			return dt.unix();
 		}).reverse();
-		fs.writeJSON('app/results.json', {refreshed: moment().toISOString(), items: items}, function(err){
+		fs.writeJSON(dir+'app/results.json', {refreshed: moment().toISOString(), items: items}, function(err){
 			if (err) {
 				console.error(err);
 			}
