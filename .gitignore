@@ -3,3 +3,4 @@ bower_components
 app/js/lib.js
 app/css/lib.css
 app/fonts/**
+.idea

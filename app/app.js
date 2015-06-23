@@ -22,9 +22,7 @@ var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 			_cachedGamesMap = null;
 
 		var api = {
-			list: list,
-			games: games,
-			gamesAsMap: gamesAsMap
+			list: list
 		};
 
 		//load them immediately...
@@ -37,47 +35,11 @@ var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 				} else {
 					$http({method: "GET", url: "./results.json"}).success(function (response) {
 						_cachedResults = response;
-						gamesAsMap().then(function(){
-							resolve(response);
-						}, reject);
+						resolve(response);	
 						//resolve(response);
 					}).error(function (err) {
 						reject(err);
 					});
-				}
-			});
-		}
-
-
-		function games(){
-			return $q(function(resolve, reject){
-				if (_cachedGames) {
-					resolve(_cachedGames);
-				} else {
-					$http({method: "GET", url: "./games.json"}).success(function (response) {
-						_cachedGames = response;
-						resolve(response);
-
-					}).error(function (err) {
-						reject(err);
-					})
-				}
-			})
-		}
-
-		function gamesAsMap(){
-			return $q(function(resolve, reject){
-				if (_cachedGamesMap) {
-					resolve(_cachedGamesMap);
-				} else {
-					games().then(function(games){
-						resolve(_.chain(games.boardgames)
-							.indexBy('objectid')
-							.transform(function(result, value, key) {
-								result[key] = value;
-							})
-							.value());
-					}, reject)
 				}
 			});
 		}
@@ -173,14 +135,14 @@ function BGGListController($scope,BGGListService, $q, $timeout){
 	function filterEdit(res, date) {
 		var dtCheck = moment(date);
 		return _.filter(res, function(n){
-			var itemDt = moment(n.$.postdate, parse_string);
+			var itemDt = moment(n.postdate);
 			return (itemDt.isAfter(dtCheck) || itemDt.isSame(dtCheck, 'd'));
 		});
 	}
 
 	function filterName(res, name){
 		return _.filter(res, function(n){
-			return n.$.objectname.toLowerCase().indexOf(name.toLowerCase()) !== -1;
+			return n.objectname.toLowerCase().indexOf(name.toLowerCase()) !== -1;
 		});	
 	}
 }
@@ -208,15 +170,12 @@ function BGGPublishers(){
 	var directive = {
 		restrict:'A',
 		scope: {
-			gameid: "="
+			game: "="
 		},
-		template:'<strong>Publishers:</strong> <ul class="list-unstyled"><li ng-repeat="publisher in vm.publishers">{{publisher._}}</li></ul>',
-		controller: function(BGGListService) {
+		template:'<strong>Publishers:</strong> <ul class="list-unstyled"><li ng-repeat="publisher in vm.publishers">{{publisher}}</li></ul>',
+		controller: function() {
 			var vm = this;
-			BGGListService.gamesAsMap().then(function(map){
-				var game = map[vm.gameid];
-				vm.publishers = (game) ? game.publishers : [];
-			})
+			vm.publishers = vm.game.publishers;
 		},
 		controllerAs: "vm",
 		bindToController: true
@@ -229,15 +188,12 @@ function BGGPublishers(){
 		var directive = {
 			restrict:'A',
 			scope: {
-				gameid: "="
+				game: "="
 			},
-			template:'<strong>Designers :</strong> <ul class="list-unstyled"><li ng-repeat="designer in vm.designers">{{designer._}}</li></ul>',
-			controller: function(BGGListService) {
+			template:'<strong>Designers :</strong> <ul class="list-unstyled"><li ng-repeat="designer in vm.designers">{{designer}}</li></ul>',
+			controller: function() {
 				var vm = this;
-				BGGListService.gamesAsMap().then(function(map){
-					var game = map[vm.gameid];
-					vm.designers = (game) ? game.designers : [];
-				})
+				vm.designers = vm.game.designers;
 			},
 			controllerAs: "vm",
 			bindToController: true
@@ -245,27 +201,27 @@ function BGGPublishers(){
 		return directive;
 	}
 
-	function BGGReadMore(){
+	function BGGReadMore($timeout){
 		var directive = {
 			restrict:"A",
 			scope: {
-				gameid: "="
+				game: "="
 			},
 			template: '<div ng-if="!vm.showMore" class="show-more">' +
-				'<div class="faded-block" ng-bind-html="vm.description"></div>' +
-				'<div class="text-center read-more-button read-more-less-button"><button class="text-center btn btn-info" ng-click="vm.readMore()">Read More</button></div>' +
+				'<div class=""><span ng-bind-html="vm.descriptionShort"></span> <button class="btn btn-link" ng-click="vm.readMore()" ng-if="vm.shortened"> Read More </button></div>' +
+				//'<div class="text-center read-more-button read-more-less-button"><button class="text-center btn btn-info" ng-click="vm.readMore()">Read More</button></div>' +
 			'</div>' +
 			'<div ng-if="vm.showMore">' +
 				'<div ng-bind-html="vm.description"></div>' +
 				'<div class="text-center read-more-less-button"><button class="text-center btn btn-info" ng-click="vm.readLess()">Read Less</button></div>' +
 			'</div>',
-			controller: function($sce, BGGListService) {
+			controller: function($sce) {
 				var vm = this;
 				vm.showMore = false;
-				BGGListService.gamesAsMap().then(function(map){
-					var game = map[vm.gameid];
-					vm.description =  $sce.trustAsHtml( (game) ? game.description[0] : "" );
-				});
+				vm.description =  $sce.trustAsHtml( (vm.game) ? vm.game.description : "" );
+				vm.descriptionShort = $sce.trustAsHtml( shorten(vm.game.description));
+
+				vm.shortened = (vm.game.description.length >= 200);
 
 				vm.readMore = function(){
 					vm.showMore = true;
@@ -274,12 +230,18 @@ function BGGPublishers(){
 				vm.readLess = function(){
 					vm.showMore = false;
 				}
+
+
+				function shorten(txt) {
+					return (txt.length < 200) ? txt : txt.slice(0,200)+"...";
+				}
 			},
 			controllerAs: "vm",
 			bindToController: true
 		};
 
 		return directive;
+
 	}
 
 })();

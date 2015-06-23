@@ -9,112 +9,174 @@ var	request	=	require('request'),
 	moment	=	require('moment'),
 	Q		=	require('q');
 
-	var parser = xml2js.parseString;
+var parser = xml2js.parseString;
 
-	var urls = {
-		geeklist: 'https://www.boardgamegeek.com/xmlapi/geeklist/184821',
-		games: 'https://www.boardgamegeek.com/xmlapi/boardgame/'
-	};
+var urls = {
+	geeklist: 'https://www.boardgamegeek.com/xmlapi/geeklist/184821',
+	games: 'https://www.boardgamegeek.com/xmlapi/boardgame/'
+};
 
-	getGeekList()
-		.then(transformData)
-		.then(reorder)
-		.then(getGameIds)
-		.then(retrieveGames)
-		.then(transformData)
-		.then(stripGamesData)
-		.then(saveGamesFile)
-		.catch(function(err){
-			console.error(err);
+getGeekList()
+	.then(transformData)
+	.then(reorder)
+	.then(stripResultsData)
+	//.then(saveResultsFile)
+	.then(handleGamesRetrieval)
+
+	.catch(function(err){
+		console.error(err);
+	});
+
+
+
+function getGeekList(){
+	console.log("Retrieving Geeklist");
+	return Q.Promise(function(resolve, reject){
+		request.get(urls.geeklist, function(error, response,body){
+			if (error) {
+				reject(new Error(error));
+			} else {
+				resolve(body);
+			}
 		});
+	})
+}
 
-
-
-	function getGeekList(){
-		console.log("Retrieving Geeklist");
-		return Q.Promise(function(resolve, reject){
-			request.get(urls.geeklist, function(error, response,body){
-				if (error) {
-					reject(new Error(error));
-				} else {
-					resolve(body);
-				}
-			});	
-		})
-	}
-
-	function transformData(body) {
-		console.log("Transforming Data");
-		return Q.Promise(function(resolve, reject){
-			parser(body, function(error, xml){
-				if (error) {
-					reject(new Error(error));
-				} else {
-					resolve(xml);
-				}
-			});	
+function transformData(body) {
+	console.log("Transforming Data");
+	return Q.Promise(function(resolve, reject){
+		parser(body, function(error, xml){
+			if (error) {
+				reject(new Error(error));
+			} else {
+				resolve(xml);
+			}
 		});
-	}
+	});
+}
 
-	function reorder(data) {
-		console.log("Reorganizing List");
-		return Q.Promise(function(resolve, reject){
-			var items = data.geeklist.item;
-			items = _.sortBy(items, function(n){
-				var dt = moment(n.$.postdate, "ddd, DD MMM YYYY HH:mm:ss +0000")
-				n.formatedPostDate = dt.toISOString();
-				return dt.unix();
-			}).reverse();
-			fs.writeJSON(dir+'app/results.json', {refreshed: moment().toISOString(), items: items}, function(err){
-				if (err) {
-					reject(new Error(err));
-				} else {
-					resolve(items);
-				}
-			});
-		})
-	}
+function reorder(data) {
+	console.log("Reorganizing List");
+	return Q.Promise(function(resolve, reject){
+		var items = data.geeklist.item;
+		items = _.sortBy(items, function(n){
+			var dt = moment(n.$.postdate, "ddd, DD MMM YYYY HH:mm:ss +0000")
+			n.formattedPostDate = dt.toISOString();
+			return dt.unix();
+		}).reverse();
+		resolve(items);
+	});
+}
 
-	function getGameIds(items) {
-		console.log("Retrieving Game Ids");
-		return Q.when(_.map(items, function(item){
-			return item.$.objectid;
-		}));
-	}
+function stripResultsData(items) {
+	console.log("Stripping Results Data");
+	return Q.when(_.map(items, function(item){
+		return {objectid: item.$.objectid, objectname: item.$.objectname, postdate: item.formattedPostDate, subtype: item.$.subtype, body: item.body};
+	}));
+}
 
-	function retrieveGames(gameIds){
-		console.log("Retrieving Games From BGG");
-		return Q.Promise(function(resolve, reject){
-			var params = gameIds.join(',');
-			request.get(urls.games+params, function(error, response,body){
-				if (error) {
-					reject(new Error(error));
-				} else {
-					resolve(body);
-				}
+function handleGamesRetrieval(items){
+
+	return Q.Promise(function(resolve, reject) {
+		getGameIds(items)
+			.then(retrieveGames)
+			.then(transformData)
+			.then(stripGamesData)
+			.then(function(games){
+				//now, lets take the games, and the items, and merge them, then send them to the saveResults
+				return mergeResultsAndGames(items, games)
 			})
-		});
-	}
+			.then(saveResultsFile)
+			.catch(reject);
+		//.then(saveGamesFile)
 
-	function stripGamesData(data) {
-		//we only need some of the data.. the file gets too big otherwise...
-		console.log("Stripping Game Data")
-		var newData = _.map(data.boardgames.boardgame, function(game){
-			return {objectid: game.$.objectid, description: game.description, publishers: game.boardgamepublisher, designers: game.boardgamedesigner}
-		});
-		return Q.when({boardgames: newData});
-	}
+	});
+}
 
-	function saveGamesFile(data) {
-		console.log("Saving Games List");
-		return Q.Promise(function(resolve,reject){
-			var games = data.boardgames;
-			fs.writeJSON(dir+'/app/games.json', {refreshed: moment().toISOString(), boardgames: games}, function(err){
-				if (err) {
-					reject(new Error(err));
-				} else {
-					resolve(games);
-				}
-			})
+function mergeResultsAndGames(items, games) {
+	console.log("Merging Results and Games");
+	return Q.Promise(function(resolve, reject){
+		//so, for each item, there is a game...
+		var gMap = gamesAsMap(games);
+		_.each(items, function(item) {
+			var game = gMap[item.objectid];
+			item.publishers = mapJustUnderscore(game.publishers);
+			item.designers = mapJustUnderscore(game.designers);
+			item.description = game.description[0];
 		});
-	}
+
+		resolve(items);
+	});
+}
+
+function mapJustUnderscore(data) {
+	return _.map(data, function(d) {
+		return d._;
+	});
+}
+
+function gamesAsMap(games) {
+	return _.chain(games.boardgames)
+		.indexBy('objectid')
+		.transform(function(result, value, key) {
+			result[key] = value;
+		})
+		.value();
+}
+
+function saveResultsFile(items){
+	console.log("Writting out Results File");
+	return Q.Promise(function(resolve, reject) {
+		fs.writeJSON(dir+'app/results.json', {refreshed: moment().toISOString(), items: items}, function(err){
+			if (err) {
+				reject(new Error(err));
+			} else {
+				resolve(items);
+			}
+		});
+	});
+}
+
+function getGameIds(items) {
+	console.log("Retrieving Game Ids");
+	return Q.when(_.map(items, function(item){
+		return item.objectid;
+	}));
+}
+
+function retrieveGames(gameIds){
+	console.log("Retrieving Games From BGG");
+	return Q.Promise(function(resolve, reject){
+		var params = gameIds.join(',');
+		request.get(urls.games+params, function(error, response,body){
+			if (error) {
+				reject(new Error(error));
+			} else {
+				resolve(body);
+			}
+		})
+	});
+}
+
+function stripGamesData(data) {
+	//we only need some of the data.. the file gets too big otherwise...
+	console.log("Stripping Game Data")
+	var newData = _.map(data.boardgames.boardgame, function(game){
+		return {objectid: game.$.objectid, description: game.description, publishers: game.boardgamepublisher, designers: game.boardgamedesigner}
+	});
+	return Q.when({boardgames: newData});
+}
+
+function saveGamesFile(data) {
+	console.log("Saving Games List");
+	return Q.Promise(function(resolve,reject){
+		var games = data.boardgames;
+		fs.writeJSON(dir+'/app/games.json', {refreshed: moment().toISOString(), boardgames: games}, function(err){
+			if (err) {
+				reject(new Error(err));
+			} else {
+				resolve(games);
+			}
+		})
+	});
+}
