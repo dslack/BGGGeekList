@@ -11,8 +11,11 @@
     <script src="js/lib.js"></script>
 	<link rel="stylesheet" href="css/lib.css" />
 
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
     <script src="bgg.wiki.js"></script>
     <script src="app.js"></script>
+	<link rel="stylesheet" href="app.css">
     <title>BGG Geek List - GenCon 2015</title>
 </head>
 <body>
@@ -21,6 +24,9 @@
 	</div>
 	<div bgg-list>
 	</div>
+	<footer>
+		<p class="text-center">Data retrieved from the <a href="https://boardgamegeek.com/wiki/page/BGG_XML_API">BoardGameGeek XML API</a></p>
+	</footer>
 
 	<script type="text/ng-template" id="list.html">
 		<form class="well well-sm">
@@ -41,13 +47,18 @@
             </div>		
 		</form>
 		<div class="list-group">
-			<a class="list-group-item" ng-repeat="item in vm.results track by item.$.id" href="https://boardgamegeek.com/{{item.$.subtype}}/{{item.$.objectid}}">
-					<h4 class="list-group-item-heading">{{item.$.objectname}} </h4>
-					<p class="list-group-item-text small"><em>Updated On {{item.formatedPostDate | date: 'dd-MMM-yyyy hh:mm a'}}</em></p>
-					<p class="list-group-item-text">
-						<wiki-convert text="item.body[0]"></wiki-convert>
-					</p>
-				</a>
+			<div class="list-group-item" ng-repeat="item in vm.results track by item.$.id" >
+				<h4 class="list-group-item-heading"><a href="https://boardgamegeek.com/{{item.$.subtype}}/{{item.$.objectid}}">{{item.$.objectname}}</a></h4>
+				<p class="list-group-item-text small"><em>Updated On {{item.formatedPostDate | date: 'dd-MMM-yyyy hh:mm a'}}</em></p>
+
+				<h5 class="list-group-item-heading" designers gameid="item.$.objectid"></h5>
+				<h5 class="list-group-item-heading" publishers gameid="item.$.objectid"></h5>
+
+				<p class="list-group-item-text spacer" read-more gameid="item.$.objectid"></p>
+				<p class="list-group-item-text">
+					<wiki-convert text="item.body[0]"></wiki-convert>
+				</p>
+			</div>
 		</div>
 	</script>
 </body>	

@@ -1,0 +1,36 @@
+.faded-block {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    max-height:50px;
+    overflow:hidden;
+    position:relative;
+}
+
+.show-more {
+    position:relative;
+}
+
+.read-more-less-button {
+    background-image: linear-gradient(to bottom, transparent, white);
+    text-align: center;
+    width: 100%;
+    position: absolute;
+
+    left: 0;
+}
+
+.read-more-button {
+    bottom: 0;
+    height: 50px;
+}
+
+.read-more-less-button>button {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+}
+
+.spacer {
+    margin-bottom:20px;
+    /*border-bottom:1px solid black;*/
+}

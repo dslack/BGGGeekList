@@ -1,12 +1,16 @@
 var BGGWiki = (function(){
 
 var REXP = {
-	center: /\[center\](.*)\[\/center\]/,
+	center: /\[center\](.*?)\[\/center\]/,
 	image: /\[ImageID\=(\d+).*?\]/,
 	thing: /\[thing\=(\d+)\](.*?)\[\/thing\]/,
 	italics: /\[i\](.*?)\[\/i\]/,
 	bold: /\[b\](.*?)\[\/b\]/,
 	floatright: /\[floatright\](.*?)\[\/floatright\]/,
+	youtube: /\[youtube=(.*?)\]/,
+	blogpost: /\[blogpost=(\d+)\](.*?)\[\/blogpost\]/,
+	url: /\[url=(.*?)\](.*?)\[\/url\]/,
+	quote: /\[q\](.*?)\[\/q\]/
 };
 
 var TASKS = {
@@ -15,7 +19,11 @@ var TASKS = {
 	thing: process_thing,
 	italics: process_italics,
 	bold : process_bold,
-	floatright: process_floatright
+	floatright: process_floatright,
+	youtube: process_youtube,
+	blogpost: process_blogpost,
+	url: process_url,
+	quote: process_quote
 }
 
 var conv = {};
@@ -71,7 +79,7 @@ function process_image(line) {
 	var reResult= REXP.image.exec(line);
 	var imageId = reResult[1];
 
-	line = line.replace(REXP.image, "<a href='https://boardgamegeek.com/image/"+imageId+"'><i class='glyphicon glyphicon-picture'></i></a>")
+	line = line.replace(REXP.image, "<a  target='_blank' href='https://boardgamegeek.com/image/"+imageId+"'><i style='font-size:4em;' class='fa fa-picture-o'></i></a>")
 	return line;		
 };
 
@@ -80,7 +88,7 @@ function process_thing(line) {
 	var id = reResult[1];
 	var content = reResult[2];
 
-	line = line.replace(REXP.thing, "<a href='https://boardgamegeek.com/boardgame/"+id+"'>"+content+"</a>")
+	line = line.replace(REXP.thing, "<a  target='_blank' href='https://boardgamegeek.com/boardgame/"+id+"'>"+content+"</a>")
 	return line;			
 };
 
@@ -108,6 +116,43 @@ function process_floatright(line) {
 	return line;
 }
 
+function process_youtube(line) {
+	var reResult = REXP.youtube.exec(line);
+	var content = reResult[1];
+
+	//line = line.replace(REXP.youtube, "<a href='https://www.youtube.com/watch?v="+content+"'><i class='fa fa-youtube'></i></a>");
+	var html = '<iframe id="ytplayer'+content+' type="text/html" width="640" height="390" '+
+  			'src="http://www.youtube.com/embed/'+content+'?autoplay=0"	frameborder="0"/>';
+
+	line = line.replace(REXP.youtube, html);  			
+	return line;
+}
+
+function process_blogpost(line) {
+	var reResult = REXP.blogpost.exec(line);
+	var id = reResult[1];
+	var content = reResult[2];
+
+	line = line.replace(REXP.blogpost, "<a target='_blank' href='https://boardgamegeek.com/blogpost/"+id+"'>"+content+"</a>");
+	return line;
+}
+
+function process_url(line) {
+	var reResult = REXP.url.exec(line);
+	var url = reResult[1];
+	var content = reResult[2];
+
+	line = line.replace(REXP.url, "<a  target='_blank' href='"+url+"'>"+content+"</a>");
+	return line;
+}
+
+function process_quote(line) {
+	var reResult = REXP.quote.exec(line);
+	var content = reResult[1];
+
+	line = line.replace(REXP.quote, "<blockquote><p>"+content+"</p></blockquote>");
+	return line;
+}
 
 return conv;
 
