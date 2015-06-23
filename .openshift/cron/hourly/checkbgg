@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var	request	=	require('request'),
+	xml2js	=	require('xml2js'),
+	_		=	require('lodash'),
+	fs		=	require('fs-extra'),
+	moment	=	require('moment');
+
+	var parser = xml2js.parseString;
+
+	request.get('https://www.boardgamegeek.com/xmlapi/geeklist/184821', transformData);
+
+	function transformData(error, response, body) {
+		parser(body, reorder);	
+	}
+
+	function reorder(error, xml) {
+		var items = xml.geeklist.item;
+		items = _.sortBy(items, function(n){
+			var dt = moment(n.$.postdate, "ddd, DD MMM YYYY HH:mm:ss +0000")
+			n.formatedPostDate = dt.toISOString();
+			return dt.unix();
+		}).reverse();
+		fs.writeJSON('app/results.json', {refreshed: moment().toISOString(), items: items}, function(err){
+			if (err) {
+				console.error(err);
+			}
+		});
+	}

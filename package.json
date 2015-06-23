@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "postinstall": "bower install && gulp"
+    "postinstall": "if [ -d \"$OPENSHIFT_REPO_DIR\" ]; then (export HOME=\"$OPENSHIFT_REPO_DIR\"/..; bower install) else (bower install) fi && gulp"
   },
   "author": "Dan Slack",
   "license": "MIT",
