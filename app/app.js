@@ -125,23 +125,25 @@ function BGGListController($scope,BGGListService, $q, $timeout){
 	};
 
 	function filterOutResults(type, val) {
-		if (val === "") {
-			vm.results = _cachedResults;
-		} else {
-			vm.results = filterTasks[type](_cachedResults, val);
-		}
+		BGGListService.list().then(function(results){
+			if (val === "") {
+				vm.results = results.items;
+			} else {
+				vm.results = filterTasks[type](results, val);
+			}
+		});	
 	}
 
 	function filterEdit(res, date) {
 		var dtCheck = moment(date);
-		return _.filter(res, function(n){
+		return _.filter(res.items, function(n){
 			var itemDt = moment(n.postdate);
 			return (itemDt.isAfter(dtCheck) || itemDt.isSame(dtCheck, 'd'));
 		});
 	}
 
 	function filterName(res, name){
-		return _.filter(res, function(n){
+		return _.filter(res.items, function(n){
 			return n.objectname.toLowerCase().indexOf(name.toLowerCase()) !== -1;
 		});	
 	}
@@ -153,7 +155,7 @@ function BGGWikiConvertDirective(){
 		scope: {
 			text: "="
 		},
-		template: "<span ng-bind-html='vm.results'></span>",
+		template: "<div ng-bind-html='vm.results' class='clearfix'></div>",
 		controller:BGGWikiConvertController,
 		controllerAs:"vm",
 		bindToController:true

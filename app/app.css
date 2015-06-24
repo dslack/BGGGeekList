@@ -34,3 +34,22 @@
     margin-bottom:20px;
     /*border-bottom:1px solid black;*/
 }
+
+.external-link {
+    position: relative;
+    height: 4em;
+    display: inline-block;
+}
+
+.large-icon {
+    font-size:4em;
+    background-color: #eee;
+    padding: 10px;
+    border-radius: 6px;    
+}
+
+.capper-icon {
+    position: absolute;
+    top: 4px;
+    right: 0px;
+}

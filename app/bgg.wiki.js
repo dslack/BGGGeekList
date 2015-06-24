@@ -79,7 +79,12 @@ function process_image(line) {
 	var reResult= REXP.image.exec(line);
 	var imageId = reResult[1];
 
-	line = line.replace(REXP.image, "<a  target='_blank' href='https://boardgamegeek.com/image/"+imageId+"'><i style='font-size:4em;' class='fa fa-picture-o'></i></a>")
+	var html = "<a class='external-link' target='_blank' href='https://boardgamegeek.com/image/"+imageId+"'>"+
+	"<i class='large-icon fa fa-picture-o'></i>"+
+	"<i class='capper-icon fa fa-external-link'></i>"+
+	"</a>"
+
+	line = line.replace(REXP.image, html)
 	return line;		
 };
 
@@ -112,7 +117,7 @@ function process_floatright(line) {
 	var reResult = REXP.floatright.exec(line);
 	var content = reResult[1];
 
-	line = line.replace(REXP.floatright, "<div class='float:right'>"+content+"</div>");
+	line = line.replace(REXP.floatright, "<div style='float:right'>"+content+"</div>");
 	return line;
 }
 
@@ -121,8 +126,13 @@ function process_youtube(line) {
 	var content = reResult[1];
 
 	//line = line.replace(REXP.youtube, "<a href='https://www.youtube.com/watch?v="+content+"'><i class='fa fa-youtube'></i></a>");
-	var html = '<iframe id="ytplayer'+content+' type="text/html" width="640" height="390" '+
-  			'src="http://www.youtube.com/embed/'+content+'?autoplay=0"	frameborder="0"/>';
+	// var html = '<iframe id="ytplayer'+content+' type="text/html" width="640" height="390" '+
+ //  			'src="http://www.youtube.com/embed/'+content+'?autoplay=0"	frameborder="0"/>';
+
+ 	var html = "<a class='external-link' href='http://www.youtube.com/embed/"+content+"?autoplay=0' target='_blank'>" +
+		"<i class='fa fa-youtube large-icon'></i>" +
+		"<i class='fa fa-external-link capper-icon'></i>" +
+		"</a>";
 
 	line = line.replace(REXP.youtube, html);  			
 	return line;
