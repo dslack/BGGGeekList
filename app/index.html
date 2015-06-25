@@ -61,5 +61,14 @@
 			</div>
 		</div>
 	</script>
+
+	<script type="text/ng-template" id="readmore.html">
+		<div ng-if="!vm.showMore" class="show-more">
+		<div class=""><span ng-bind-html="vm.descriptionShort"></span> <a role="button" ng-click="vm.readMore()" ng-if="vm.shortened"> Read More </a></div>
+			</div>
+			<div ng-if="vm.showMore">
+				<div class=""><span ng-bind-html="vm.description"></span> <a role="button" ng-click="vm.readLess()">Read Less</a></div>
+			</div>	
+	</script>
 </body>	
 </html>

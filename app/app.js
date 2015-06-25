@@ -209,14 +209,7 @@ function BGGPublishers(){
 			scope: {
 				game: "="
 			},
-			template: '<div ng-if="!vm.showMore" class="show-more">' +
-				'<div class=""><span ng-bind-html="vm.descriptionShort"></span> <button class="btn btn-link" ng-click="vm.readMore()" ng-if="vm.shortened"> Read More </button></div>' +
-				//'<div class="text-center read-more-button read-more-less-button"><button class="text-center btn btn-info" ng-click="vm.readMore()">Read More</button></div>' +
-			'</div>' +
-			'<div ng-if="vm.showMore">' +
-				'<div ng-bind-html="vm.description"></div>' +
-				'<div class="text-center read-more-less-button"><button class="text-center btn btn-info" ng-click="vm.readLess()">Read Less</button></div>' +
-			'</div>',
+			templateUrl: 'readmore.html',
 			controller: function($sce) {
 				var vm = this;
 				vm.showMore = false;
