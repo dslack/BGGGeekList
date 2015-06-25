@@ -61,6 +61,8 @@ function BGGListDirective(){
 function BGGListController($scope,BGGListService, $q, $timeout){
 
 	var vm = this;
+	this.release = null,
+		this.gameName = null;
 
 	var picker = null;
 
@@ -102,7 +104,7 @@ function BGGListController($scope,BGGListService, $q, $timeout){
 		} else {
 			picker.data('DateTimePicker').show();
 		}
-	}
+	};
 
 	$scope.$watch("lastEdited", function(newVal, prevVal) {
 		if (newVal !== prevVal) {
@@ -110,7 +112,13 @@ function BGGListController($scope,BGGListService, $q, $timeout){
 		}
 	});
 
-	$scope.$watch("gameName", function(newVal, prevVal){
+	$scope.$watch("vm.released", function(newVal, prevVal) {
+		if (newVal !== prevVal) {
+			filterOutResults("released", newVal);
+		}
+	});
+
+	$scope.$watch("vm.gameName", function(newVal, prevVal){
 		if (newVal !== prevVal) {
 
 			//filter the results temporarily...
@@ -121,17 +129,24 @@ function BGGListController($scope,BGGListService, $q, $timeout){
 
 	var filterTasks = {
 		"edited": filterEdit,
+		"released": filterReleased,
 		"gameName": filterName
 	};
 
 	function filterOutResults(type, val) {
 		BGGListService.list().then(function(results){
-			if (val === "") {
+			if (val === "" || !val) {
 				vm.results = results.items;
 			} else {
 				vm.results = filterTasks[type](results, val);
 			}
 		});	
+	}
+
+	function filterReleased(res, val) {
+		return _.filter(res.items, function(n){
+			return n.released;
+		});
 	}
 
 	function filterEdit(res, date) {
@@ -155,7 +170,7 @@ function BGGWikiConvertDirective(){
 		scope: {
 			text: "="
 		},
-		template: "<div ng-bind-html='vm.results' class='clearfix'></div>",
+		templateUrl: "wiki.html",
 		controller:BGGWikiConvertController,
 		controllerAs:"vm",
 		bindToController:true

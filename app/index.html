@@ -17,8 +17,22 @@
     <script src="app.js"></script>
 	<link rel="stylesheet" href="app.css">
     <title>BGG Geek List - GenCon 2015</title>
+
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+					(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-64457644-1', 'auto');
+		ga('send', 'pageview');
+
+	</script>
 </head>
 <body>
+	<div class="alert alert-info" role="alert">
+		June 25, 2015 - Added released information based on <a href="http://bit.ly/1HhCAyr" target="_blank">http://bit.ly/1HhCAyr</a>
+	</div>
 	<div class="page-header">
   		<h1>BGG Geek List Reader <small>Gencon 2015</small></h1>
   		<h4>See full GenCon Preview Geeklist at <a href="https://boardgamegeek.com/geeklist/184821/gen-con-2015-preview" target="_blank">BGG</a></h4>
@@ -40,7 +54,12 @@
 				<p class="small">Refreshed on <span class="label label-default">{{vm.refreshed | date: "dd-MMM-yyyy hh:mm a"}}</span></p>
 				<div class="form-group">
 					<label for="gameName">Name:</label>
-					<input type="text" class="form-control" ng-model="gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
+					<input type="text" class="form-control" ng-model="vm.gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
+				</div>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" ng-model="vm.released"> Show Only Games Released At GenCon
+					</label>
 				</div>
 	<!--			<div class="form-group">
 					<label for="editedDate">Last Edited (and newer)</label>
@@ -56,10 +75,11 @@
 			<div class="list-group">
 				<div class="list-group-item" ng-repeat="item in vm.results track by item.objectid" >
 					<h4 class="list-group-item-heading"><a href="https://boardgamegeek.com/{{item.subtype}}/{{item.objectid}}">{{item.objectname}}</a></h4>
-					<p class="list-group-item-text small"><em>Updated On {{item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</em></p>
+					<p class="list-group-item-text small"><em>Updated On <strong>{{item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
+					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{item.released ? 'Yes' : 'No'}}</p>
 
-					<h5 class="list-group-item-heading" designers game="item"></h5>
-					<h5 class="list-group-item-heading" publishers game="item"></h5>
+					<p class="list-group-item-text" designers game="item"></p>
+					<p class="list-group-item-text" publishers game="item"></p>
 
 					<p class="list-group-item-text spacer" read-more game="item"></p>
 					<p class="list-group-item-text">
@@ -77,12 +97,32 @@
 	</script>
 
 	<script type="text/ng-template" id="readmore.html">
-		<div ng-if="!vm.showMore" class="show-more">
-		<div class=""><span ng-bind-html="vm.descriptionShort"></span> <a role="button" ng-click="vm.readMore()" ng-if="vm.shortened"> Read More </a></div>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Description</h3>
 			</div>
-			<div ng-if="vm.showMore">
-				<div class=""><span ng-bind-html="vm.description"></span> <a role="button" ng-click="vm.readLess()">Read Less</a></div>
-			</div>	
+			<div class="panel-body">
+				<div ng-if="!vm.showMore" class="show-more">
+					<div class=""><span ng-bind-html="vm.descriptionShort"></span> <a role="button" ng-click="vm.readMore()" ng-if="vm.shortened"> Read More </a></div>
+				</div>
+				<div ng-if="vm.showMore" class="">
+					<div class=""><span ng-bind-html="vm.description"></span> <a role="button" ng-click="vm.readLess()">Read Less</a></div>
+				</div>
+			</div>
+		</div>
+
+	</script>
+
+	<script type="text/ng-template" id="wiki.html">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Notes</h3>
+			</div>
+			<div class="panel-body">
+				<div ng-bind-html='vm.results' class='clearfix'></div>
+			</div>
+		</div>
+
 	</script>
 </body>	
 </html>
