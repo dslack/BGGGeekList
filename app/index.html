@@ -23,44 +23,57 @@
   		<h1>BGG Geek List Reader <small>Gencon 2015</small></h1>
   		<h4>See full GenCon Preview Geeklist at <a href="https://boardgamegeek.com/geeklist/184821/gen-con-2015-preview" target="_blank">BGG</a></h4>
 	</div>
-	<div bgg-list>
-	</div>
+	<div bgg-list>	
+	</div>	
 	<footer>
-		<p class="text-center">Data retrieved from the <a href="https://boardgamegeek.com/wiki/page/BGG_XML_API">BoardGameGeek XML API</a></p>
+		<p class="text-center">
+			Data retrieved from the <a href="https://boardgamegeek.com/wiki/page/BGG_XML_API">BoardGameGeek XML API</a>
+		</p>
+		<address class="text-center">
+			Any issues or feature requests?  Email me at <a href="mailto:ctharsis999@gmail.com">ctharsis999@gmail.com</a>
+		</address>
 	</footer>
 
 	<script type="text/ng-template" id="list.html">
-		<form class="well well-sm">
-			<p class="small">Refreshed on <span class="label label-default">{{vm.refreshed | date: "dd-MMM-yyyy hh:mm a"}}</span></p>
-			<div class="form-group">
-				<label for="gameName">Name:</label>
-				<input type="text" class="form-control" ng-model="gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
-			</div>
-<!--			<div class="form-group">
-				<label for="editedDate">Last Edited (and newer)</label>
-                <div class='input-group date' id='datetimepicker1'>
-                	
-                    <input type='text' class="form-control" ng-model="lastEdited" placeholder="Last time the item was edited"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar" ng-click="vm.showDatePicker()"></span>
-                    </span>
-                </div>
-            </div>-->
-		</form>
-		<div class="list-group">
-			<div class="list-group-item" ng-repeat="item in vm.results track by item.objectid" >
-				<h4 class="list-group-item-heading"><a href="https://boardgamegeek.com/{{item.subtype}}/{{item.objectid}}">{{item.objectname}}</a></h4>
-				<p class="list-group-item-text small"><em>Updated On {{item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</em></p>
+		<div ng-if="vm.results">
+			<form class="well well-sm">
+				<p class="small">Refreshed on <span class="label label-default">{{vm.refreshed | date: "dd-MMM-yyyy hh:mm a"}}</span></p>
+				<div class="form-group">
+					<label for="gameName">Name:</label>
+					<input type="text" class="form-control" ng-model="gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
+				</div>
+	<!--			<div class="form-group">
+					<label for="editedDate">Last Edited (and newer)</label>
+	                <div class='input-group date' id='datetimepicker1'>
+	                	
+	                    <input type='text' class="form-control" ng-model="lastEdited" placeholder="Last time the item was edited"/>
+	                    <span class="input-group-addon">
+	                        <span class="glyphicon glyphicon-calendar" ng-click="vm.showDatePicker()"></span>
+	                    </span>
+	                </div>
+	            </div>-->
+			</form>
+			<div class="list-group">
+				<div class="list-group-item" ng-repeat="item in vm.results track by item.objectid" >
+					<h4 class="list-group-item-heading"><a href="https://boardgamegeek.com/{{item.subtype}}/{{item.objectid}}">{{item.objectname}}</a></h4>
+					<p class="list-group-item-text small"><em>Updated On {{item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</em></p>
 
-				<h5 class="list-group-item-heading" designers game="item"></h5>
-				<h5 class="list-group-item-heading" publishers game="item"></h5>
+					<h5 class="list-group-item-heading" designers game="item"></h5>
+					<h5 class="list-group-item-heading" publishers game="item"></h5>
 
-				<p class="list-group-item-text spacer" read-more game="item"></p>
-				<p class="list-group-item-text">
-					<wiki-convert text="item.body[0]"></wiki-convert>
-				</p>
+					<p class="list-group-item-text spacer" read-more game="item"></p>
+					<p class="list-group-item-text">
+						<wiki-convert text="item.body[0]"></wiki-convert>
+					</p>
+				</div>
 			</div>
-		</div>
+		</div>	
+
+		<div ng-show="!vm.results.length">
+			<div class='uil-reload-css center-block' style='-webkit-transform:scale(0.6)'>
+			  <div></div>
+			</div>
+		</div>			
 	</script>
 
 	<script type="text/ng-template" id="readmore.html">
