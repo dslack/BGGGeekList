@@ -31,7 +31,8 @@
 </head>
 <body>
 	<div class="alert alert-info" role="alert">
-		June 25, 2015 - Added released information based on <a href="http://bit.ly/1HhCAyr" target="_blank">http://bit.ly/1HhCAyr</a>
+		<div><strong>June 26, 2015</strong> - Added Publisher Notes, which includes the booth in most cases, as well as Images!</div>
+		<div class="text-muted">June 25, 2015 - Added released information based on <a href="http://bit.ly/1HhCAyr" target="_blank">http://bit.ly/1HhCAyr</a></div>
 	</div>
 	<div class="page-header">
   		<h1>BGG Geek List Reader <small>Gencon 2015</small></h1>
@@ -78,9 +79,11 @@
 					<p class="list-group-item-text small"><em>Updated On <strong>{{item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
 					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{item.released ? 'Yes' : 'No'}}</p>
 
+
 					<p class="list-group-item-text" designers game="item"></p>
 					<p class="list-group-item-text" publishers game="item"></p>
 
+					<p class="list-group-item-text" publisher-notes game="item"></p>
 					<p class="list-group-item-text spacer" read-more game="item"></p>
 					<p class="list-group-item-text">
 						<wiki-convert text="item.body[0]"></wiki-convert>

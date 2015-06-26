@@ -2,7 +2,7 @@ var BGGWiki = (function(){
 
 var REXP = {
 	center: /\[center\](.*?)\[\/center\]/,
-	image: /\[ImageID\=(\d+).*?\]/,
+	image: /\[ImageID\=(\d+)(.*?)\]/,
 	thing: /\[thing\=(\d+)\](.*?)\[\/thing\]/,
 	italics: /\[i\](.*?)\[\/i\]/,
 	bold: /\[b\](.*?)\[\/b\]/,
@@ -65,6 +65,11 @@ conv.process = function(wikitext, options){
 	return html;
 };
 
+	conv.switchToPng = function(img){
+		if (img.src.match(/\.jpg$/)) {
+			img.src = img.src.replace(/\.jpg$/, '.png');
+		}
+	};
 
 
 function process_center(line){
@@ -78,11 +83,28 @@ function process_center(line){
 function process_image(line) {
 	var reResult= REXP.image.exec(line);
 	var imageId = reResult[1];
+	var size = reResult[2];
 
-	var html = "<a class='external-link' target='_blank' href='https://boardgamegeek.com/image/"+imageId+"'>"+
+	/*var html = "<a class='external-link' target='_blank' href='https://boardgamegeek.com/image/"+imageId+"'>"+
 	"<i class='large-icon fa fa-picture-o'></i>"+
 	"<i class='capper-icon fa fa-external-link'></i>"+
-	"</a>"
+	"</a>";*/
+
+	if (!size) {
+		size = 't';
+	} else {
+		size = size.trim();
+		switch(size) {
+			case "medium":
+				size = 'md';
+				break;
+			case "inline":
+				size = 't';
+				break;
+		}
+	}
+
+	var html = "<a target='_blank' href='https://boardgamegeek.com/image/"+imageId+"'><img src='https://cf.geekdo-images.com/images/pic"+imageId+"_"+size+".jpg' onerror='BGGWiki.switchToPng(this)'></img></a>";
 
 	line = line.replace(REXP.image, html)
 	return line;		

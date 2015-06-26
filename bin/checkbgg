@@ -8,7 +8,8 @@ var	_		=	require('lodash'),
 	Q		=	require('q'),
 	GenCon 	=	require('./gencon'),
 	GeekList=	require('./geeklist'),
-	Games 	=	require('./games');
+	Games 	=	require('./games'),
+	PubNotes=	require('./scrape');
 
 var urls = {
 	gencon: 184821,
@@ -49,22 +50,32 @@ function handleGamesRetrieval(results){
 	var releases = results[1];
 	return Q.Promise(function(resolve, reject) {
 		//lets also get the games to be released (according to https://boardgamegeek.com/geeklist/192268/games-releasing-gen-con-2015)
-		gamesRetrieval(items)
+		var promises = [];
+		promises.push(gamesRetrieval(items));
+		promises.push(PubNotes());
+
+		Q.all(promises).done(function(values){
+			var games = values[0];
+			var publisherAndNotes = values[1];
+			mergeResultsAndGames(items, releases, games, publisherAndNotes)
+				.then(saveResultsFile)
+				.catch(reject);
+		});
+		/*gamesRetrieval(items)
 			.then(function(games){
 				//now, lets take the games, and the items, and merge them, then send them to the saveResults
 				return mergeResultsAndGames(items, releases, games)
-			})
-			.then(saveResultsFile)
-			.catch(reject);
+			})*/
 		//.then(saveGamesFile)
 	});
 }
 
-function mergeResultsAndGames(items, releases, games) {
+function mergeResultsAndGames(items, releases, games, publisherNotes) {
 	console.log("Merging Results and Games");
 	return Q.Promise(function(resolve, reject){
 		//so, for each item, there is a game...
 		var gMap = gamesAsMap(games);
+		var pubNotes = publisherAndNotesAsMap(publisherNotes);
 		_.each(items, function(item) {
 			var released = _.find(releases, function(r) {
 				return r.objectid === item.objectid;
@@ -74,6 +85,7 @@ function mergeResultsAndGames(items, releases, games) {
 			item.designers = mapJustUnderscore(game.designers);
 			item.description = game.description[0];
 			item.released = (!!released);
+			item.publisherNotes = pubNotes[item.mainpublisher].notes;
 		});
 
 		resolve(items);
@@ -89,6 +101,15 @@ function mapJustUnderscore(data) {
 function gamesAsMap(games) {
 	return _.chain(games.boardgames)
 		.indexBy('objectid')
+		.transform(function(result, value, key) {
+			result[key] = value;
+		})
+		.value();
+}
+
+function publisherAndNotesAsMap(pubNotes){
+	return _.chain(pubNotes)
+		.indexBy('publisher')
 		.transform(function(result, value, key) {
 			result[key] = value;
 		})

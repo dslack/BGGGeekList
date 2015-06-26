@@ -1,6 +1,7 @@
 (function(){
 
 var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
+	var newLineRE = /<br>\s*?<br>/g;
 
 	angular.module('BGGGeekListApp', [])
 		.factory('BGGListService', BGGListService)
@@ -10,6 +11,7 @@ var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 		.directive('publishers', BGGPublishers)
 		.directive('designers', BGGDesigners)
 		.directive('readMore', BGGReadMore)
+		.directive('publisherNotes', BGGPublisherNotes)
 		.filter('parseAndFormat', function(){
 			return function(val){
 				console.log(arguments);
@@ -201,19 +203,56 @@ function BGGPublishers(){
 }
 
 
-	function BGGDesigners(){
+	function BGGDesigners() {
 		var directive = {
-			restrict:'A',
+			restrict: 'A',
 			scope: {
 				game: "="
 			},
-			template:'<strong>Designers :</strong> <ul class="list-unstyled"><li ng-repeat="designer in vm.designers">{{designer}}</li></ul>',
-			controller: function() {
+			template: '<strong>Designers :</strong> <ul class="list-unstyled"><li ng-repeat="designer in vm.designers">{{designer}}</li></ul>',
+			controller: function () {
 				var vm = this;
 				vm.designers = vm.game.designers;
 			},
 			controllerAs: "vm",
 			bindToController: true
+		};
+		return directive;
+	}
+
+	function BGGPublisherNotes($sce){
+		var directive = {
+			restrict:'A',
+			scope: {
+				game: "="
+			},
+			template:'<strong>Publisher Notes :</strong> <span ng-bind-html="pubNotes"></span>',
+			link: function(scope) {
+
+				var vm = scope;
+				var notes = vm.game.publisherNotes;
+				notes = notes.replace(/^<br>/, "");
+				notes = notes.replace(/<br>$/, "");
+				notes = notes.replace(newLineRE, "<br>");
+
+				//we want to strip out the post_fre div...
+				var docFrag = document.createDocumentFragment();
+				var div = document.createElement('div');
+				div.innerHTML = '<div>'+notes+'</div>';
+				docFrag.appendChild(div);
+
+				var postFr = docFrag.querySelector('.post_fr');
+				if (postFr) {
+					postFr.parentNode.removeChild(postFr);
+				}
+
+				var tac = docFrag.querySelector('.tac');
+				if (tac) {
+					tac.parentNode.removeChild(tac);
+				}
+
+				vm.pubNotes = $sce.trustAsHtml(div.innerHTML);
+			}
 		};
 		return directive;
 	}
