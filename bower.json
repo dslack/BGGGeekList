@@ -17,6 +17,7 @@
     "eonasdan-bootstrap-datetimepicker": "~4.14.30",
     "wiky.js": "https://github.com/tanin47/wiky.js.git",
     "bootstrap": "~3.3.5",
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "angular-debounce": "~1.0.3"
   }
 }

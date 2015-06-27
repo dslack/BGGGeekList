@@ -7,7 +7,8 @@ var path = {
 	'bower_components/moment/min/moment.min.js',
 	'bower_components/boostrap/dist/js/bootstrap.js',
 	'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-	'bower_components/wiky.js/wiky.js'
+	'bower_components/wiky.js/wiky.js',
+		'bower_components/angular-debounce/dist/angular-debounce.js'
 	],
 	css: ['bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css',
 	'bower_components/bootstrap/dist/css/bootstrap.css',

@@ -26,7 +26,6 @@
 
 		ga('create', 'UA-64457644-1', 'auto');
 		ga('send', 'pageview');
-
 	</script>
 </head>
 <body>
@@ -62,6 +61,11 @@
 						<input type="checkbox" ng-model="vm.released"> Show Only Games Released At GenCon
 					</label>
 				</div>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" ng-model="vm.simpleView"> Show Simpler View
+					</label>
+				</div>
 	<!--			<div class="form-group">
 					<label for="editedDate">Last Edited (and newer)</label>
 	                <div class='input-group date' id='datetimepicker1'>
@@ -74,19 +78,18 @@
 	            </div>-->
 			</form>
 			<div class="list-group">
-				<div class="list-group-item" ng-repeat="item in vm.results track by item.objectid" >
-					<h4 class="list-group-item-heading"><a href="https://boardgamegeek.com/{{item.subtype}}/{{item.objectid}}">{{item.objectname}}</a></h4>
-					<p class="list-group-item-text small"><em>Updated On <strong>{{item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
-					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{item.released ? 'Yes' : 'No'}}</p>
+				<div class="list-group-item" ng-repeat="item in vm.results track by item.objectid" ng-hide="item.hide">
+					<h4 class="list-group-item-heading"><a target="_blank" href="https://boardgamegeek.com/{{::item.subtype}}/{{::item.objectid}}">{{::item.objectname}}</a></h4>
+					<p class="list-group-item-text small"><em>Updated On <strong>{{::item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
+					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{::item.released ? 'Yes' : 'No'}}</p>
 
+					<p class="list-group-item-text" designers game="::item" simple-view="vm.simpleView"></p>
+					<p class="list-group-item-text" publishers game="::item" simple-view="vm.simpleView"></p>
 
-					<p class="list-group-item-text" designers game="item"></p>
-					<p class="list-group-item-text" publishers game="item"></p>
-
-					<p class="list-group-item-text" publisher-notes game="item"></p>
-					<p class="list-group-item-text spacer" read-more game="item"></p>
-					<p class="list-group-item-text">
-						<wiki-convert text="item.body[0]"></wiki-convert>
+					<p class="list-group-item-text" publisher-notes game="::item"></p>
+					<p class="list-group-item-text spacer" ng-show="!vm.simpleView" read-more game="::item"></p>
+					<p class="list-group-item-text" ng-show="!vm.simpleView">
+						<wiki-convert text="::item.body[0]"></wiki-convert>
 					</p>
 				</div>
 			</div>
@@ -127,5 +130,5 @@
 		</div>
 
 	</script>
-</body>	
+</body>
 </html>

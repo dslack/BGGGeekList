@@ -3,7 +3,7 @@
 var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 	var newLineRE = /<br>\s*?<br>/g;
 
-	angular.module('BGGGeekListApp', [])
+	angular.module('BGGGeekListApp', ['rt.debounce'])
 		.factory('BGGListService', BGGListService)
 		.directive('bggList', BGGListDirective)
 		.controller("BGGListController", BGGListController)
@@ -12,6 +12,7 @@ var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 		.directive('designers', BGGDesigners)
 		.directive('readMore', BGGReadMore)
 		.directive('publisherNotes', BGGPublisherNotes)
+
 		.filter('parseAndFormat', function(){
 			return function(val){
 				console.log(arguments);
@@ -60,58 +61,21 @@ function BGGListDirective(){
 }
 
 
-function BGGListController($scope,BGGListService, $q, $timeout){
+function BGGListController($scope,BGGListService, debounce){
 
 	var vm = this;
 	this.release = null,
 		this.gameName = null;
 
-	var picker = null;
-
 	BGGListService.list().then(function(results) {
 		var geekList = results;
-
 		vm.refreshed = geekList.refreshed;
 		vm.results = geekList.items;
 	});
 
 
-	$timeout(function(){
-		initDatePicker();
-	}, 0);
-
-	function initDatePicker(){
-		picker = $('#datetimepicker1');
-		picker.datetimepicker({
-			useCurrent: false,
-			format: "YYYY/MM/DD",
-			allowInputToggle: true
-		});
-		picker.on('dp.change', function(dt){
-			picker.data('DateTimePicker').hide();
-			if (dt.date) {
-				$scope.lastEdited =dt.date.format(picker.data('DateTimePicker').options().format);
-			
-			} else {
-				$scope.lastEdited = "";
-			}
-			$scope.$apply()
-		});
-	}
-
-
-	this.showDatePicker = function(){
-		if (!picker) {
-			initDatePicker();
-		} else {
-			picker.data('DateTimePicker').show();
-		}
-	};
-
-	$scope.$watch("lastEdited", function(newVal, prevVal) {
-		if (newVal !== prevVal) {
-			filterOutResults("edited", newVal);
-		}
+	var gameNameDebounce = debounce(500, function(newVal){
+		filterOutResults("gameName", newVal);
 	});
 
 	$scope.$watch("vm.released", function(newVal, prevVal) {
@@ -124,45 +88,60 @@ function BGGListController($scope,BGGListService, $q, $timeout){
 		if (newVal !== prevVal) {
 
 			//filter the results temporarily...
-			filterOutResults("gameName", newVal);
+			gameNameDebounce(newVal);
+
 		}
 	});
 
 
 	var filterTasks = {
-		"edited": filterEdit,
 		"released": filterReleased,
 		"gameName": filterName
 	};
 
 	function filterOutResults(type, val) {
-		BGGListService.list().then(function(results){
+		/*BGGListService.list().then(function(results){
 			if (val === "" || !val) {
-				vm.results = results.items;
+				//vm.results = results.items;
+				showAll(results.items);
 			} else {
 				vm.results = filterTasks[type](results, val);
 			}
-		});	
+		});*/
+		if (val === "" || !val) {
+			//vm.results = results.items;
+			showAll(vm.results);
+		} else {
+			filterTasks[type](vm.results, val);
+		}
+	}
+
+	function showAll(items) {
+		_.each(items, function(n){
+			n.hide = false;
+		})
 	}
 
 	function filterReleased(res, val) {
-		return _.filter(res.items, function(n){
+		/*return _.filter(res.items, function(n){
 			return n.released;
+		});*/
+		_.each(res, function(n){
+			if (!n.released) {
+				n.hide = true;
+			}
 		});
-	}
 
-	function filterEdit(res, date) {
-		var dtCheck = moment(date);
-		return _.filter(res.items, function(n){
-			var itemDt = moment(n.postdate);
-			return (itemDt.isAfter(dtCheck) || itemDt.isSame(dtCheck, 'd'));
-		});
+		return res;
 	}
 
 	function filterName(res, name){
-		return _.filter(res.items, function(n){
+		/*return _.filter(res.items, function(n){
 			return n.objectname.toLowerCase().indexOf(name.toLowerCase()) !== -1;
-		});	
+		});*/
+		_.each(res, function(n){
+			n.hide = !(n.objectname.toLowerCase().indexOf(name.toLowerCase()) !== -1);
+		})
 	}
 }
 
@@ -189,12 +168,14 @@ function BGGPublishers(){
 	var directive = {
 		restrict:'A',
 		scope: {
-			game: "="
+			game: "=",
+			simpleView: "="
 		},
-		template:'<strong>Publishers:</strong> <ul class="list-unstyled"><li ng-repeat="publisher in vm.publishers">{{publisher}}</li></ul>',
+		template:'<strong>Publishers:</strong> <ul ng-class="{\'list-inline\': vm.simpleView}" class="list-unstyled"><li ng-repeat="publisher in vm.publishers">{{::publisher}}</li></ul>',
 		controller: function() {
 			var vm = this;
 			vm.publishers = vm.game.publishers;
+			vm.publishersSimple = vm.game.publishers.join(", ");
 		},
 		controllerAs: "vm",
 		bindToController: true
@@ -207,12 +188,14 @@ function BGGPublishers(){
 		var directive = {
 			restrict: 'A',
 			scope: {
-				game: "="
+				game: "=",
+				simpleView: "="
 			},
-			template: '<strong>Designers :</strong> <ul class="list-unstyled"><li ng-repeat="designer in vm.designers">{{designer}}</li></ul>',
+			template: '<strong>Designers :</strong> <ul ng-class="{\'list-inline\': vm.simpleView}" class="list-unstyled"><li ng-repeat="designer in vm.designers">{{::designer}}</li></ul>',
 			controller: function () {
 				var vm = this;
 				vm.designers = vm.game.designers;
+				vm.designersSimple = vm.game.designers.join(", ");
 			},
 			controllerAs: "vm",
 			bindToController: true
