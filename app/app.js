@@ -36,7 +36,7 @@ var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 				if (_cachedResults) {
 					resolve(_cachedResults);
 				} else {
-					$http({method: "GET", url: "./results.json"}).success(function (response) {
+					$http({method: "GET", url: "./results.json?"+new Date().getTime()}).success(function (response) {
 						_cachedResults = response;
 						resolve(response);	
 						//resolve(response);
