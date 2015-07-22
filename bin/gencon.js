@@ -2,7 +2,7 @@ var Q		=	require('q'),
 	moment	=	require('moment'),
 	_		=	require('lodash');
 
-var GenCon = {}
+var GenCon = {};
 
 GenCon.reorder = function (data) {
 	console.log("-- Reorganizing List");
@@ -15,13 +15,13 @@ GenCon.reorder = function (data) {
 		}).reverse();
 		resolve(items);
 	});
-}
+};
 
 GenCon.stripResultsData = function(items) {
 	console.log("-- Stripping Results Data");
 	return Q.when(_.map(items, function(item){
-		return {objectid: item.$.objectid, objectname: item.$.objectname, mainpublisher: item.$.publisherid, postdate: item.formattedPostDate, subtype: item.$.subtype, body: item.body};
+		return {id: item.$.id, objectid: item.$.objectid, objectname: item.$.objectname, mainpublisher: item.$.publisherid, postdate: item.formattedPostDate, subtype: item.$.subtype, body: item.body};
 	}));
-}
+};
 
 module.exports = GenCon;

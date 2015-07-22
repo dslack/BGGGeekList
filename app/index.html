@@ -74,7 +74,7 @@
 	            </div>-->
 			</form>
 			<div class="list-group">
-				<div class="list-group-item" ng-repeat="item in vm.results track by item.objectid" ng-hide="item.hide">
+				<div class="list-group-item" ng-repeat="item in vm.results track by item.id" ng-hide="item.hide">
 					<h4 class="list-group-item-heading"><a target="_blank" href="https://boardgamegeek.com/{{::item.subtype}}/{{::item.objectid}}">{{::item.objectname}}</a></h4>
 					<p class="list-group-item-text small"><em>Updated On <strong>{{::item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
 					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{::item.released ? 'Yes' : 'No'}}</p>
