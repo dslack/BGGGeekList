@@ -6,28 +6,42 @@ var	_		=	require('lodash'),
 	fs		=	require('fs-extra'),
 	moment	=	require('moment'),
 	Q		=	require('q'),
-	GenCon 	=	require('./gencon'),
 	GeekList=	require('./geeklist'),
 	Games 	=	require('./games'),
 	PubNotes=	require('./scrape');
 
 var urls = {
-	gencon: 184821,
-	released: 192268
+	//geeklist: 184821,
+	//released: 192268
+	geeklist: 174654,
+	released: null
+
 };
 
-function genConRetrieval(){
-	return GeekList.getGeekList(urls.gencon)
+var lists = [geeklistRetrieval(), releasedRetrieval()];
+
+Q.all(lists)
+	.then(handleGamesRetrieval)
+	.catch(function(err){
+		console.error(err);
+	});
+
+
+function geeklistRetrieval(){
+	return GeekList.getGeekList(urls.geeklist)
 		.then(GeekList.transformData)
-		.then(GenCon.reorder)
-		.then(GenCon.stripResultsData);
+		.then(GeekList.reorder)
+		.then(GeekList.stripResultsData);
 }
 
 function releasedRetrieval() {
+	if (!urls.released) {
+		return Q.when([]);
+	}
 	return GeekList.getGeekList(urls.released)
 		.then(GeekList.transformData)
-		.then(GenCon.reorder)
-		.then(GenCon.stripResultsData);
+		.then(GeekList.reorder)
+		.then(GeekList.stripResultsData);
 }
 
 function gamesRetrieval(items) {
@@ -36,13 +50,6 @@ function gamesRetrieval(items) {
 			.then(GeekList.transformData)
 			.then(Games.stripGamesData);
 }
-
-
-Q.all([genConRetrieval(), releasedRetrieval()])
-	.then(handleGamesRetrieval)
-	.catch(function(err){
-		console.error(err);
-	});
 
 
 function handleGamesRetrieval(results){
@@ -85,7 +92,9 @@ function mergeResultsAndGames(items, releases, games, publisherNotes) {
 			item.designers = mapJustUnderscore(game.designers);
 			item.description = game.description[0];
 			item.released = (!!released);
-			item.publisherNotes = pubNotes[item.mainpublisher].notes;
+			if (pubNotes[item.mainpublisher] && pubNotes[item.mainpublisher].notes) {
+				item.publisherNotes = pubNotes[item.mainpublisher].notes;
+			}
 		});
 
 		resolve(items);

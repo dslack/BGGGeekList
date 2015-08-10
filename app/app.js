@@ -1,9 +1,12 @@
 (function(){
 
-var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
+	var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 	var newLineRE = /<br>\s*?<br>/g;
 
 	angular.module('BGGGeekListApp', ['rt.debounce'])
+		.run(function($rootScope){
+			$rootScope.config = CONFIG;
+		})
 		.factory('BGGListService', BGGListService)
 		.directive('bggList', BGGListDirective)
 		.controller("BGGListController", BGGListController)
@@ -62,6 +65,7 @@ function BGGListDirective(){
 
 
 function BGGListController($scope,BGGListService, debounce){
+
 
 	var vm = this;
 	this.release = null,
