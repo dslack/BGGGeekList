@@ -13,8 +13,9 @@ var	_		=	require('lodash'),
 var urls = {
 	//geeklist: 184821,
 	//released: 192268
-	geeklist: 174654,
-	released: null
+	//geeklist: 174654,
+	geeklist: 198728,
+	released: 209188
 
 };
 
@@ -81,23 +82,37 @@ function mergeResultsAndGames(items, releases, games, publisherNotes) {
 	console.log("Merging Results and Games");
 	return Q.Promise(function(resolve, reject){
 		//so, for each item, there is a game...
+
 		var gMap = gamesAsMap(games);
 		var pubNotes = publisherAndNotesAsMap(publisherNotes);
+		var newItems = [];
+
 		_.each(items, function(item) {
 			var released = _.find(releases, function(r) {
 				return r.objectid === item.objectid;
 			});
 			var game = gMap[item.objectid];
+			if (!game) {
+				return;
+			}
 			item.publishers = mapJustUnderscore(game.publishers);
 			item.designers = mapJustUnderscore(game.designers);
 			item.description = game.description[0];
 			item.released = (!!released);
 			if (pubNotes[item.mainpublisher] && pubNotes[item.mainpublisher].notes) {
 				item.publisherNotes = pubNotes[item.mainpublisher].notes;
+			} else {
+				item.publisherNotes = "";
+				_.each(game.publishers, function(pub) {
+
+					item.publisherNotes += (pubNotes[pub.$.objectid]) ? pubNotes[pub.$.objectid].notes : "";
+				});
 			}
+			newItems.push(item);
 		});
 
-		resolve(items);
+		//resolve(items);
+		resolve(newItems);
 	});
 }
 
@@ -126,7 +141,7 @@ function publisherAndNotesAsMap(pubNotes){
 }
 
 function saveResultsFile(items){
-	console.log("Writting out Results File");
+	console.log("Writing out Results File");
 	return Q.Promise(function(resolve, reject) {
 		fs.writeJSON(dir+'app/results.json', {refreshed: moment().toISOString(), items: items}, function(err){
 			if (err) {

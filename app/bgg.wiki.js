@@ -10,7 +10,9 @@ var REXP = {
 	youtube: /\[youtube=(.*?)\]/,
 	blogpost: /\[blogpost=(\d+)\](.*?)\[\/blogpost\]/,
 	url: /\[url=(.*?)\](.*?)\[\/url\]/,
-	quote: /\[q\](.*?)\[\/q\]/
+	quote: /\[q\](.*?)\[\/q\]/,
+	family: /\[family=(.*?)\](.*?)\[\/family\]/,
+	hyperlinks: /<a href=\\"\/(.*?)\\"(.*?)<\/a>/
 };
 
 var TASKS = {
@@ -23,7 +25,9 @@ var TASKS = {
 	youtube: process_youtube,
 	blogpost: process_blogpost,
 	url: process_url,
-	quote: process_quote
+	quote: process_quote,
+	family: process_family,
+	hyperlinks: process_hyperlinks
 }
 
 var conv = {};
@@ -186,6 +190,28 @@ function process_quote(line) {
 	return line;
 }
 
+function process_family(line) {
+	var reResult = REXP.family.exec(line);
+	var id = reResult[1];
+	var content = reResult[2];
+	var url = 'https://boardgamegeek.com/boardgamefamily/'+id;
+	line = line.replace(REXP.family, "<a  target='_blank' href='"+url+"'>"+content+"</a>");
+	return line;
+}
+
+function process_hyperlinks(line) {
+	var reResult = REXP.hyperlinks.exec(line);
+	var id = reResult[1];
+	var content = reResult[2];
+	var url = 'https://boardgamegeek.com/'+id;
+	line = line.replace(REXP.hyperlinks, "<a  target='_blank' href='"+url+"'>"+content+"</a>");
+	return line;
+}
+
+
+
 return conv;
+
+
 
 })();

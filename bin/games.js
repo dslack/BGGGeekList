@@ -15,7 +15,10 @@ var Games = {
 
 function getGameIds(items) {
 	console.log("Retrieving Game Ids");
-	return Q.when(_.map(items, function(item){
+	var filteredItems = _.filter(items, function(item){
+		return item.subtype != 'boardgamepublisher';
+	});
+	return Q.when(_.map(filteredItems, function(item){
 		return item.objectid;
 	}));
 }

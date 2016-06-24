@@ -15,7 +15,8 @@ var CONFIG = {
 var CONFIG = {
         convention: "GenCon 2016",
         geeklist: "https://boardgamegeek.com/geeklist/198728",
+        releasedGeeklist: "https://boardgamegeek.com/geeklist/209188/games-debuting-sale-gen-con-2016",
         showReleased: true,
-		ga: 'UA-64457644-1'
+        ga: 'UA-64457644-1'
 };
 

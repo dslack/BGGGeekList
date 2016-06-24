@@ -55,7 +55,7 @@
 				</div>
 				<div class="checkbox" ng-if="config.showReleased">
 					<label>
-						<input type="checkbox" ng-model="vm.released"> Show Only Games Released At {{config.convention}}
+						<input type="checkbox" ng-model="vm.released"> Show Only Games Released At {{config.convention}} (According to <a href="{{config.releasedGeeklist}}">here</a>)
 					</label>
 				</div>
 				<div class="checkbox">
@@ -78,7 +78,7 @@
 				<div class="list-group-item" ng-repeat="item in vm.results track by item.id" ng-hide="item.hide">
 					<h4 class="list-group-item-heading"><a target="_blank" href="https://boardgamegeek.com/{{::item.subtype}}/{{::item.objectid}}">{{::item.objectname}}</a></h4>
 					<p class="list-group-item-text small"><em>Updated On <strong>{{::item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
-					<!--<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{::item.released ? 'Yes' : 'No'}}</p>-->
+					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{::item.released ? 'Yes' : 'No'}}</p>
 
 					<p class="list-group-item-text" designers game="::item" simple-view="vm.simpleView"></p>
 					<p class="list-group-item-text" publishers game="::item" simple-view="vm.simpleView"></p>

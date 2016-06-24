@@ -17,11 +17,15 @@ GeekList.getGeekList = function(geeklistId){
 			if (error) {
 				reject(new Error(error));
 			} else {
+				if (_.startsWith(body,'Saving filename')) {
+					reject(new Error("Geeklist was not downloaded..."));
+					return;
+				}
 				resolve(body);
 			}
 		});
 	})
-}
+};
 
 GeekList.transformData = function(body) {
 	console.log("-- Transforming Data");
@@ -34,7 +38,7 @@ GeekList.transformData = function(body) {
 			}
 		});
 	});
-}
+};
 
 
 GeekList.reorder = function (data) {

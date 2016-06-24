@@ -2,6 +2,8 @@
 
 	var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 	var newLineRE = /<br>\s*?<br>/g;
+	var hyperlinksRE = /<a href="\/(.*?)">(.*?)<\/a>/g;
+	var imageresizerRE = /(<img.*)(onload="ImageResizer.resize\(this\);")(.*>)/g;
 
 	angular.module('BGGGeekListApp', ['rt.debounce'])
 		.run(function($rootScope){
@@ -178,8 +180,13 @@ function BGGPublishers(){
 		template:'<strong>Publishers:</strong> <ul ng-class="{\'list-inline\': vm.simpleView}" class="list-unstyled"><li ng-repeat="publisher in vm.publishers">{{::publisher}}</li></ul>',
 		controller: function() {
 			var vm = this;
-			vm.publishers = vm.game.publishers;
-			vm.publishersSimple = vm.game.publishers.join(", ");
+			if (!vm.game.publishers) {
+				vm.publishers = [];
+				vm.publishersSimple = [];
+			} else {
+				vm.publishers = vm.game.publishers;
+				vm.publishersSimple = vm.game.publishers.join(", ");
+			}
 		},
 		controllerAs: "vm",
 		bindToController: true
@@ -198,8 +205,13 @@ function BGGPublishers(){
 			template: '<strong>Designers :</strong> <ul ng-class="{\'list-inline\': vm.simpleView}" class="list-unstyled"><li ng-repeat="designer in vm.designers">{{::designer}}</li></ul>',
 			controller: function () {
 				var vm = this;
-				vm.designers = vm.game.designers;
-				vm.designersSimple = vm.game.designers.join(", ");
+				if (!vm.game.designers) {
+					vm.designers = [];
+					vm.designersSimple = [];
+				} else {
+					vm.designers = vm.game.designers;
+					vm.designersSimple = vm.game.designers.join(", ");
+				}
 			},
 			controllerAs: "vm",
 			bindToController: true
@@ -218,9 +230,16 @@ function BGGPublishers(){
 
 				var vm = scope;
 				var notes = vm.game.publisherNotes;
+				if (!notes) {
+					notes = "";
+				}
 				notes = notes.replace(/^<br>/, "");
 				notes = notes.replace(/<br>$/, "");
 				notes = notes.replace(newLineRE, "<br>");
+
+				notes = notes.replace(hyperlinksRE, '<a target="_blank" href="https://boardgamegeek.com/$1">$2</a>');
+
+				notes = notes.replace(imageresizerRE, '$1$3');
 
 				//we want to strip out the post_fre div...
 				var docFrag = document.createDocumentFragment();
@@ -253,11 +272,16 @@ function BGGPublishers(){
 			templateUrl: 'readmore.html',
 			controller: function($sce) {
 				var vm = this;
+				var desc = "";
 				vm.showMore = false;
-				vm.description =  $sce.trustAsHtml( (vm.game) ? vm.game.description : "" );
-				vm.descriptionShort = $sce.trustAsHtml( shorten(vm.game.description));
 
-				vm.shortened = (vm.game.description.length >= 200);
+				if (vm.game.description) {
+					desc = vm.game.description;
+				}
+				vm.description =  $sce.trustAsHtml( (vm.game) ? desc : "" );
+				vm.descriptionShort = $sce.trustAsHtml( shorten(desc));
+
+				vm.shortened = (desc.length >= 200);
 
 				vm.readMore = function(){
 					vm.showMore = true;
@@ -269,7 +293,7 @@ function BGGPublishers(){
 
 
 				function shorten(txt) {
-					return (txt.length < 200) ? txt : txt.slice(0,200)+"...";
+					return (!txt || txt.length < 200) ? txt : txt.slice(0,200)+"...";
 				}
 			},
 			controllerAs: "vm",
