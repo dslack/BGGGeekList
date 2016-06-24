@@ -29,9 +29,9 @@ try {
 }
 
 var urls = {
-    main: 'https://boardgamegeek.com/geeklist/184821/gen-con-2015-preview',
-    byPage: 'https://boardgamegeek.com/geeklist/184821/gen-con-2015-preview/page/',
-    titles: 'https://boardgamegeek.com/geeklist/184821/gen-con-2015-preview?titlesonly=1'
+    main: 'https://boardgamegeek.com/geeklist/198728/gen-con-2016-preview',
+    byPage: 'https://boardgamegeek.com/geeklist/198728/gen-con-2016-preview/page/',
+    titles: 'https://boardgamegeek.com/geeklist/198728/gen-con-2016-preview?titlesonly=1'
 };
 
 /** Dev Mode */

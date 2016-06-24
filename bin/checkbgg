@@ -72,8 +72,8 @@ function handleGamesRetrieval(results){
 			.then(function(games){
 				//now, lets take the games, and the items, and merge them, then send them to the saveResults
 				return mergeResultsAndGames(items, releases, games)
-			})*/
-		//.then(saveGamesFile)
+			})
+		.then(saveGamesFile)*/
 	});
 }
 
