@@ -1,6 +1,6 @@
 {
   "name": "BGGGeeklist",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "fs-extra": "^0.20.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.5.2",
-    "lodash": "^3.9.3",
+    "lodash": "^4.13.1",
     "moment": "^2.10.3",
     "node-schedule": "^0.2.9",
     "q": "^1.4.1",

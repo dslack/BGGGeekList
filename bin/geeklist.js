@@ -2,6 +2,7 @@ var Q		=	require('q'),
 	request	=	require('request'),
 	xml2js	=	require('xml2js'),
 	_		=	require('lodash'),
+	Common	=	require('./common'),
 	moment	=	require('moment');
 	
 var parser = xml2js.parseString;
@@ -28,16 +29,7 @@ GeekList.getGeekList = function(geeklistId){
 };
 
 GeekList.transformData = function(body) {
-	console.log("-- Transforming Data");
-	return Q.Promise(function(resolve, reject){
-		parser(body, function(error, xml){
-			if (error) {
-				reject(new Error(error));
-			} else {
-				resolve(xml);
-			}
-		});
-	});
+	return Common.transformData(body);
 };
 
 

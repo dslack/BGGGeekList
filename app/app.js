@@ -1,5 +1,7 @@
 (function(){
 
+	var currentYear = new Date().getFullYear()
+
 	var parse_string = "ddd, DD MMM YYYY HH:mm:ss +0000";
 	var newLineRE = /<br>\s*?<br>/g;
 	var hyperlinksRE = /<a href="\/(.*?)">(.*?)<\/a>/g;
@@ -71,7 +73,8 @@ function BGGListController($scope,BGGListService, debounce){
 
 	var vm = this;
 	this.release = null,
-		this.gameName = null;
+	this.showReleasedThisYear = null,
+	this.gameName = null;
 
 	BGGListService.list().then(function(results) {
 		var geekList = results;
@@ -90,6 +93,12 @@ function BGGListController($scope,BGGListService, debounce){
 		}
 	});
 
+	$scope.$watch("vm.showReleasedThisYear", function(newVal, prevVal){
+		if (newVal !== prevVal) {
+			filterOutResults("yearPublished", (newVal) ? currentYear : "");
+		}
+	});
+
 	$scope.$watch("vm.gameName", function(newVal, prevVal){
 		if (newVal !== prevVal) {
 
@@ -102,7 +111,8 @@ function BGGListController($scope,BGGListService, debounce){
 
 	var filterTasks = {
 		"released": filterReleased,
-		"gameName": filterName
+		"gameName": filterName,
+		"yearPublished": filterYearPublished
 	};
 
 	function filterOutResults(type, val) {
@@ -147,6 +157,13 @@ function BGGListController($scope,BGGListService, debounce){
 		});*/
 		_.each(res, function(n){
 			n.hide = !(n.objectname.toLowerCase().indexOf(name.toLowerCase()) !== -1);
+		})
+	}
+
+	function filterYearPublished(res, year) {
+		
+		_.each(res, function(n){
+			n.hide = (n.yearPublished != year);
 		})
 	}
 }
