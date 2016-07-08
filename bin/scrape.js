@@ -99,7 +99,13 @@ function getListOfPublishers(){
     log("*** Get List of Publishers");
     var titles = urls.titles;
     return Q.Promise(function(resolve, reject){
+        log("*** Finding publishers via scraping");
         x(titles, [".geeklist_publisher a@href"])(function(err, pubLinks){
+            log("*** Found Publisher Links");
+            if (err) {
+                reject(err);
+                return;
+            }
             var pubIds = [];
             _.each(pubLinks, function(pubLink) {
                 pubIds.push(extractPublisherId(pubLink));
@@ -118,6 +124,7 @@ function getListOfPublishers(){
  * @returns {*}
  */
 function compareCachedPublishers(publishers) {
+    log("*** Comparing cached publishers");
     return Q.Promise(function(resolve, reject){
         if (!publishers.publishers.equals(listOfPublishers.publishers)) {
             //now, we need to update the list of publishers json...
@@ -156,7 +163,7 @@ function retrievePublishersAndNotes(){
                 writePublisherAndNotes(results).then(function(){
                     resolve(results);
                 })
-            });
+            }).catch(reject);
     });
 }
 
