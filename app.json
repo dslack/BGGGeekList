@@ -1,6 +1,6 @@
 {
-  "name": "BGG GenCon 2016 Geek List",
-  "description": "Angular Display of the GenCon 2016 Geek List",
+  "name": "BGG GenCon 2017 Geek List",
+  "description": "Angular Display of the GenCon 2017 Geek List",
   "repository": "https://github.com/dslack/bgggeeklist",
   "keywords": ["node", "express", "static"]
 }

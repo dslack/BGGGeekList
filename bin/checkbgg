@@ -15,9 +15,10 @@ var urls = {
 	//geeklist: 184821,
 	//released: 192268
 	//geeklist: 174654,
-	geeklist: 198728,
-	released: 209188
-
+	//geeklist: 198728,
+	//released: 209188
+	geeklist: 196767,
+	released: 226833
 };
 
 var lists = [geeklistRetrieval(), releasedRetrieval()];

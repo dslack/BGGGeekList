@@ -13,9 +13,9 @@ var CONFIG = {
 };*/
 
 var CONFIG = {
-        convention: "GenCon 2016",
-        geeklist: "https://boardgamegeek.com/geeklist/198728",
-        releasedGeeklist: "https://boardgamegeek.com/geeklist/209188/games-debuting-sale-gen-con-2016",
+        convention: "GenCon 2017",
+        geeklist: "https://boardgamegeek.com/geeklist/196767",
+        releasedGeeklist: "https://boardgamegeek.com/geeklist/226833/games-debuting-sale-gen-con-2017",
         showReleased: true,
         ga: 'UA-64457644-1'
 };
