@@ -9,18 +9,26 @@
   },
   "author": "Dan Slack",
   "license": "MIT",
-  "dependencies": {
-    "bower": "^1.4.1",
+  "devDependencies": {
     "express": "~4.9.x",
     "fs-extra": "^0.20.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.5.2",
+    "gulp-inject": "^4.2.0",
     "lodash": "^4.13.1",
     "moment": "^2.10.3",
     "node-schedule": "^0.2.9",
     "q": "^1.4.1",
     "request": "^2.58.0",
+    "stream-series": "^0.1.1",
     "x-ray": "^2.3.0",
     "xml2js": "^0.4.17"
+  },
+  "dependencies": {
+    "angular-debounce": "^1.1.0",
+    "bootstrap": "^3.3.7",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "jquery": "^3.2.1",
+    "wiky.js": "0.0.1"
   }
 }

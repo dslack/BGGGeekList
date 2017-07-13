@@ -30,6 +30,8 @@ var TASKS = {
 	hyperlinks: process_hyperlinks
 }
 
+var TIMER_CONSTRAINT = 4;
+
 var conv = {};
 
 conv.process = function(wikitext, options){
@@ -46,14 +48,14 @@ conv.process = function(wikitext, options){
 		Object.keys(REXP).forEach(function(key) {
 			var timer = 0;
 			while (newLine.match(REXP[key]) != null)  {
-				if (timer > 4) {
+				if (timer > TIMER_CONSTRAINT) {
 					break;
 				}
 				newLine = TASKS[key](newLine);
 				timer += 1;
 
 			}
-			if (timer > 4) {
+			if (timer > TIMER_CONSTRAINT) {
 				console.log(newLine);
 			}
 			timer = 0;

@@ -20,3 +20,6 @@ var CONFIG = {
         ga: 'UA-64457644-1'
 };
 
+window.ImageResizer = {
+        resize: function(){}
+};
