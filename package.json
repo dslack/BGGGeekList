@@ -9,6 +9,9 @@
   },
   "author": "Dan Slack",
   "license": "MIT",
+  "engine": {
+     "node": ">= 5.2.0"
+  },
   "devDependencies": {
     "express": "~4.9.x",
     "fs-extra": "^0.20.0",
