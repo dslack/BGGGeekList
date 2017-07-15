@@ -9,8 +9,9 @@
   },
   "author": "Dan Slack",
   "license": "MIT",
-  "engine": {
-     "node": ">= 5.2.0"
+  "engines": {
+    "node": ">= 5.9.0",
+    "npm": ">= 1.2.0"
   },
   "devDependencies": {
     "express": "~4.9.x",
