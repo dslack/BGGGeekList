@@ -10,10 +10,12 @@
 
     function SortListCtrl() {
         var $ctrl = this;
-
-        $ctrl.sortByAlpha = function(){
+        $ctrl.sortBy = 'added';
+        $ctrl.sortByAlpha = function(ascending){
             $ctrl.list.sort(function(a,b){
-                return a.objectname.localeCompare(b.objectname);
+                var o1 = (ascending) ? a : b;
+                var o2 = (ascending) ? b : a;
+                return o1.objectname.localeCompare(o2.objectname);
             })
         }
 

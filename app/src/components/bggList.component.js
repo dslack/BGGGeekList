@@ -1,4 +1,6 @@
 (function () {
+	var currentYear = new Date().getFullYear()
+
 	angular.module('BGGGeekListApp')
 		.component("bggList", {
 			templateUrl: "list.html",
@@ -18,7 +20,12 @@
 				var geekList = results;
 				$ctrl.refreshed = geekList.refreshed;
 				$ctrl.results = geekList.items;
+			}).then(function(){
+				return BGGListService.publishers()
+			}).then(function(publishers){
+				$ctrl.publishers = publishers;
 			});
+			
 		}
 
 
@@ -38,6 +45,12 @@
 			}
 		});
 
+		$scope.$watch("$ctrl.publisher", function(newVal, prevVal) {
+			if (newVal !== prevVal) {
+				filterOutResults("publisher", newVal);
+			}
+		})
+
 		$scope.$watch("$ctrl.gameName", function (newVal, prevVal) {
 			if (newVal !== prevVal) {
 
@@ -51,7 +64,8 @@
 		var filterTasks = {
 			"released": filterReleased,
 			"gameName": filterName,
-			"yearPublished": filterYearPublished
+			"yearPublished": filterYearPublished,
+			"publisher" : filterPublisher
 		};
 
 		function filterOutResults(type, val) {
@@ -104,6 +118,12 @@
 			_.each(res, function (n) {
 				n.hide = (n.yearPublished != year);
 			})
+		}
+
+		function filterPublisher(res, name) {
+			_.each(res, function(n){
+				n.hide = n.publishers.indexOf(name) === -1;
+			});
 		}
 	}
 })();

@@ -1,8 +1,5 @@
 (function(){
 
-	var currentYear = new Date().getFullYear()
-
-
 	angular.module('BGGGeekListApp', ['rt.debounce'])
 		.run(function($rootScope){
 			$rootScope.config = CONFIG;
@@ -15,24 +12,34 @@
 			_cachedGamesMap = null;
 
 		var api = {
-			list: list
+			list: list,
+			publishers: publishers
 		};
 
 		//load them immediately...
 		return api;
 
 		function list(){
-			return $q(function(resolve, reject){
-				if (_cachedResults) {
-					resolve(_cachedResults);
-				} else {
-					$http({method: "GET", url: "./results.json?"+new Date().getTime()}).then(function (response) {
-						_cachedResults = response.data;
-						resolve(response.data);	
-						//resolve(response);
-					}).catch(reject);
-				}
+			if (_cachedResults) {
+				return $q.resolve(_cachedResults);
+			}
+			return $http({method: "GET", url: "./results.json?"+new Date().getTime()}).then(function (response) {
+				_cachedResults = response.data;
+				return response.data;		
 			});
+		}
+
+		function publishers () {
+			var publishers = _cachedResults.items.map(function(x){
+				return x.publishers;
+			});
+			publishers = [].concat.apply([], publishers);
+			publishers = publishers.reduce(function(a,b){
+				if (a.indexOf(b) < 0) a.push(b);
+				return a
+			}, []);
+			publishers.sort();
+			return $q.resolve(publishers);
 		}
 	}
 

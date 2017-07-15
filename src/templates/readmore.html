@@ -1,0 +1,13 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Description</h3>
+    </div>
+    <div class="panel-body">
+        <div ng-if="!$ctrl.showMore" class="show-more">
+            <div class=""><span ng-bind-html="$ctrl.descriptionShort"></span> <a role="button" ng-click="$ctrl.readMore()" ng-if="vm.shortened"> Read More </a></div>
+        </div>
+        <div ng-if="$ctrl.showMore" class="">
+            <div class=""><span ng-bind-html="$ctrl.description"></span> <a role="button" ng-click="$ctrl.readLess()">Read Less</a></div>
+        </div>
+    </div>
+</div>

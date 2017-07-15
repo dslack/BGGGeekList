@@ -6,3 +6,4 @@ app/fonts/**
 .idea
 bin/*.json
 app/results.json
+app/templates.js

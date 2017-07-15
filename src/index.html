@@ -8,7 +8,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.js"></script>
   
-    <script src="js/lib.js"></script>
+	<script src="js/lib.js"></script>
 	<link rel="stylesheet" href="css/lib.css" />
 
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -44,107 +44,5 @@
 			Data retrieved from the <a href="https://boardgamegeek.com/wiki/page/BGG_XML_API">BoardGameGeek XML API</a>
 		</p>
 	</footer>
-
-	<script type="text/ng-template" id="list.html">
-		<div ng-if="$ctrl.results">
-			<form class="well well-sm">
-				<p class="small">Refreshed on <span class="label label-default">{{$ctrl.refreshed | date: "dd-MMM-yyyy hh:mm a"}}</span></p>
-				<div class="form-group">
-					<label for="gameName">Name:</label>
-					<input type="text" class="form-control" ng-model="$ctrl.gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
-				</div>
-				<div class="checkbox" ng-if="config.showReleased">
-					<label>
-						<input type="checkbox" ng-model="$ctrl.released"> Show Only Games Released At {{config.convention}} (According to <a href="{{config.releasedGeeklist}}">here</a>)
-					</label>
-				</div>
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" ng-model="$ctrl.showReleasedThisYear"> Show Released This Year
-					</label>
-				</div>				
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" ng-model="$ctrl.simpleView"> Show Simpler View
-					</label>
-				</div>
-				<sort-list list="$ctrl.results"></sort-list>
-	<!--			<div class="form-group">
-					<label for="editedDate">Last Edited (and newer)</label>
-	                <div class='input-group date' id='datetimepicker1'>
-	                	
-	                    <input type='text' class="form-control" ng-model="lastEdited" placeholder="Last time the item was edited"/>
-	                    <span class="input-group-addon">
-	                        <span class="glyphicon glyphicon-calendar" ng-click="vm.showDatePicker()"></span>
-	                    </span>
-	                </div>
-	            </div>-->
-			</form>
-			<div class="list-group">
-				<div class="list-group-item" ng-repeat="item in $ctrl.results track by item.id" ng-hide="item.hide">
-					<h4 class="list-group-item-heading"><a target="_blank" href="https://boardgamegeek.com/{{::item.subtype}}/{{::item.objectid}}">{{::item.objectname}}</a></h4>
-					<p class="list-group-item-text small"><em>Updated On <strong>{{::item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
-					<p class="list-group-item-text"><strong>Year Published: </strong> {{::item.yearPublished}}</p>
-					<p class="list-group-item-text"><strong>Released at Gencon?</strong> {{::item.released ? 'Yes' : 'No'}}</p>
-					
-
-					<p class="list-group-item-text" designers game="::item" simple-view="$ctrl.simpleView"></p>
-					<p class="list-group-item-text" publishers game="::item" simple-view="$ctrl.simpleView"></p>
-
-					<p class="list-group-item-text" publisher-notes game="::item"></p>
-					<p class="list-group-item-text spacer" ng-show="!$ctrl.simpleView" read-more game="::item"></p>
-					<p class="list-group-item-text" ng-show="!$ctrl.simpleView">
-						<wiki-convert text="::item.body[0]"></wiki-convert>
-					</p>
-				</div>
-			</div>
-		</div>	
-
-		<div ng-show="!$ctrl.results.length">
-			<div class='uil-reload-css center-block' style='-webkit-transform:scale(0.6)'>
-			  <div></div>
-			</div>
-		</div>			
-	</script>
-
-	<script type="text/ng-template" id="readmore.html">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Description</h3>
-			</div>
-			<div class="panel-body">
-				<div ng-if="!$ctrl.showMore" class="show-more">
-					<div class=""><span ng-bind-html="$ctrl.descriptionShort"></span> <a role="button" ng-click="$ctrl.readMore()" ng-if="vm.shortened"> Read More </a></div>
-				</div>
-				<div ng-if="$ctrl.showMore" class="">
-					<div class=""><span ng-bind-html="$ctrl.description"></span> <a role="button" ng-click="$ctrl.readLess()">Read Less</a></div>
-				</div>
-			</div>
-		</div>
-
-	</script>
-
-	<script type="text/ng-template" id="sort.html">
-		<div class="radio">
-			<label>
-				<input type="radio" ng-model="$ctrl.sortBy" ng-change="$ctrl.sortByAdded()" name="sortBy" value="added"> Sort by Recently Added
-			</label>
-		<label>
-				<input type="radio" ng-model="$ctrl.sortBy" ng-change="$ctrl.sortByAlpha()" name="sortBy" value="name"> Sort by Game Name
-			</label>
-		</div>
-	</script>
-
-	<script type="text/ng-template" id="wiki.html">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Notes</h3>
-			</div>
-			<div class="panel-body">
-				<div ng-bind-html='$ctrl.results' class='clearfix'></div>
-			</div>
-		</div>
-
-	</script>
 </body>
 </html>

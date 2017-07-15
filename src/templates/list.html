@@ -1,0 +1,56 @@
+<div ng-if="$ctrl.results">
+    <form class="well well-sm">
+        <p class="small">Refreshed on <span class="label label-default">{{$ctrl.refreshed | date: "dd-MMM-yyyy hh:mm a"}}</span></p>
+        <div class="form-group">
+            <label for="gameName">Name:</label>
+            <input type="text" class="form-control" ng-model="$ctrl.gameName" id="gameName" placeholder="Name, e.g. Agricola"/>
+        </div>
+        <div class="form-group">
+            <label for="gameName">Publishers:</label>
+            <select id="publishersFilter" class="form-control" ng-model="$ctrl.publisher" name="publisher" ng-options="p as p for p in $ctrl.publishers">
+                <option value="">All</option>
+            </select>
+        </div>
+        
+        <div class="checkbox" ng-if="config.showReleased">
+            <label>
+                <input type="checkbox" ng-model="$ctrl.released"> Show Only Games Released At {{config.convention}} (According to <a href="{{config.releasedGeeklist}}">here</a>)
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="$ctrl.showReleasedThisYear"> Show Released This Year
+            </label>
+        </div>				
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="$ctrl.simpleView"> Show Simpler View
+            </label>
+        </div>
+        <sort-list list="$ctrl.results"></sort-list>
+    </form>
+    <div class="list-group">
+        <div class="list-group-item" ng-repeat="item in $ctrl.results track by item.id" ng-hide="item.hide">
+            <h4 class="list-group-item-heading"><a target="_blank" href="https://boardgamegeek.com/{{::item.subtype}}/{{::item.objectid}}">{{::item.objectname}}</a></h4>
+            <p class="list-group-item-text small"><em>Updated On <strong>{{::item.postdate | date: 'dd-MMM-yyyy hh:mm a'}}</strong></em></p>
+            <p class="list-group-item-text"><strong>Year Published: </strong> {{::item.yearPublished}}</p>
+            <p class="list-group-item-text"><strong>Released at Gencon?</strong> {{::item.released ? 'Yes' : 'No'}}</p>
+            
+
+            <p class="list-group-item-text" designers game="::item" simple-view="$ctrl.simpleView"></p>
+            <p class="list-group-item-text" publishers game="::item" simple-view="$ctrl.simpleView"></p>
+
+            <p class="list-group-item-text" publisher-notes game="::item"></p>
+            <p class="list-group-item-text spacer" ng-show="!$ctrl.simpleView" read-more game="::item"></p>
+            <p class="list-group-item-text" ng-show="!$ctrl.simpleView">
+                <wiki-convert text="::item.body[0]"></wiki-convert>
+            </p>
+        </div>
+    </div>
+</div>	
+
+<div ng-show="!$ctrl.results.length">
+    <div class='uil-reload-css center-block' style='-webkit-transform:scale(0.6)'>
+        <div></div>
+    </div>
+</div>

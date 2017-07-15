@@ -1,0 +1,11 @@
+		<div>
+			<label class="radio-inline">
+				<input type="radio" ng-model="$ctrl.sortBy" ng-change="$ctrl.sortByAdded()" name="sortBy" value="added"> Sort by Recently Added
+            </label>
+		    <label class="radio-inline">
+				<input type="radio" ng-model="$ctrl.sortBy" ng-change="$ctrl.sortByAlpha(true)" name="sortBy" value="name"> Sort by Game Name (#-Z)
+            </label>
+		    <label class="radio-inline">
+				<input type="radio" ng-model="$ctrl.sortBy" ng-change="$ctrl.sortByAlpha(false)" name="sortBy" value="nameReverse"> Sort by Game Name (Z-#)
+			</label>            
+		</div>
